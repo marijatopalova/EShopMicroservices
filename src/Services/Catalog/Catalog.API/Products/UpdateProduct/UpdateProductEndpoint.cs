@@ -22,7 +22,7 @@ namespace Catalog.API.Products.UpdateProduct
                 return Results.Ok(response);
             })
             .WithName("UpdateProduct")
-            .Produces<GetProductsResponse>(StatusCodes.Status200OK)
+            .Produces<UpdateProductResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .WithSummary("Update Product")
             .WithDescription("Update Product");
