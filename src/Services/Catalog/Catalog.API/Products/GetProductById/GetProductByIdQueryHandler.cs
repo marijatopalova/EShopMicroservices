@@ -5,13 +5,11 @@ namespace Catalog.API.Products.GetProductById
 
     public record GetProductByIdResult(Product Product);
 
-    public class GetProductByIdQueryHandler(IDocumentSession session, ILogger<GetProductByIdQueryHandler> logger)
+    public class GetProductByIdQueryHandler(IDocumentSession session)
         : IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
     {
         public async Task<GetProductByIdResult> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
         {
-            logger.LogInformation("GetProductByIdQueryHandler.Handle called with {@Query}", query);
-
             var result = await session.LoadAsync<Product>(query.Id, cancellationToken);
 
             if (result is null)
