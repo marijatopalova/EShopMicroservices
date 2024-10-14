@@ -11,7 +11,7 @@ namespace Catalog.API.Products.GetProducts
         {
             app.MapGet("/products", async ([AsParameters] GetProductsRequest request, ISender sender) =>
             {
-                var query = request.Adapt<GetProductsRequest>();
+                var query = request.Adapt<GetProductsQuery>();
 
                 var result = await sender.Send(query);
 
