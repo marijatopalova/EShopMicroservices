@@ -1,13 +1,15 @@
 using BuildingBlocks.Exceptions.Handler;
+using Discount.Grpc;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
+
+// Application Services
 var assembly = typeof(Program).Assembly;
 builder.Services.AddCarter();
-
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(assembly);
@@ -15,6 +17,7 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
+// Data Services
 builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
@@ -29,12 +32,13 @@ builder.Services.AddStackExchangeRedisCache(opts =>
     opts.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
-//builder.Services.AddScoped<IBasketRepository>(provider =>
-//{
-//    var basketRepository = provider.GetRequiredService<BasketRepository>();
-//    return new CachedBasketRepository(basketRepository, provider.GetRequiredService<IDistributedCache>());
-//});
+// Grpc Services
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
 
+// Cross-Cutting Services
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services.AddHealthChecks()
